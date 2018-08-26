@@ -646,8 +646,11 @@ static int tcl_dcclist STDVAR
 {
   int i;
   char *p, idxstr[10], timestamp[11], other[160];
+#ifdef TLS
+  char sslport[7]; /* ssl + portmax + NULL */
+#endif
   long tv;
-  EGG_CONST char *list[6];
+  EGG_CONST char *list[7];
 
   BADARGS(1, 2, " ?type?");
 
@@ -657,6 +660,10 @@ static int tcl_dcclist STDVAR
       egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
       tv = dcc[i].timeval;
       egg_snprintf(timestamp, sizeof timestamp, "%ld", tv);
+#ifdef TLS
+      egg_snprintf(sslport, sizeof sslport, "%s%d",
+                   dcc[i].ssl ? "+" : "", dcc[i].port);
+#endif
       if (dcc[i].type && dcc[i].type->display)
         dcc[i].type->display(i, other);
       else {
@@ -667,10 +674,15 @@ static int tcl_dcclist STDVAR
       list[0] = idxstr;
       list[1] = dcc[i].nick;
       list[2] = dcc[i].host;
-      list[3] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
-      list[4] = other;
-      list[5] = timestamp;
-      p = Tcl_Merge(6, list);
+#ifdef TLS
+      list[3] = sslport;
+#else
+      list[3] = dcc[i].port;
+#endif
+      list[4] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
+      list[5] = other;
+      list[6] = timestamp;
+      p = Tcl_Merge(7, list);
       Tcl_AppendElement(irp, p);
       Tcl_Free((char *) p);
     }
