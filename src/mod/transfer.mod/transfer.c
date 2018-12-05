@@ -1111,7 +1111,7 @@ static tcl_ints myints[] = {
   {"max-dloads",       &dcc_limit},
   {"dcc-block",        &dcc_block},
   {"xfer-timeout", &wait_dcc_xfer},
-  {"share-unlink",      &shunlink},
+  {"sharefail-unlink",  &shunlink},
   {NULL,                     NULL}
 };
 
