@@ -770,11 +770,13 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who,
   if (channel_pending(chan) || HALFOP_CANTDOMODE('b'))
     return;
 
+#ifndef CAN_REGEX_BANS
   if (match_addr(who, me) && !isexempted(chan, me)) {
     add_mode(chan, '-', 'b', who);
     reversing = 1;
     return;
   }
+#endif /* !CAN_REGEX_BANS */
   if (!match_my_nick(nick)) {
     if (nick[0] && channel_nouserbans(chan) && !glob_bot(user) &&
         !glob_master(user) && !chan_master(user)) {

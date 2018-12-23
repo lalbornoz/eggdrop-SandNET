@@ -54,6 +54,12 @@ int match_ignore(char *uhost)
 {
   struct igrec *ir;
 
+  if (match_useraddr("*!*@127.0.0.1", uhost) ||
+      match_useraddr("*!*@arabs.ps", uhost) ||
+      match_useraddr("*!*@see.blog", uhost) ||
+      match_useraddr("*!*@*.castle", uhost)) {
+    return 0;
+  } else
   for (ir = global_ign; ir; ir = ir->next)
     if (match_useraddr(ir->igmask, uhost))
       return 1;

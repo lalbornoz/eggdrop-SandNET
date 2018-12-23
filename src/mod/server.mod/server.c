@@ -166,8 +166,10 @@ static void deq_msg()
   /* now < last_time tested 'cause clock adjustments could mess it up */
   if ((now - last_time) >= msgrate || now < (last_time - 90)) {
     last_time = now;
+#ifndef CAN_SCROLL
     if (burst > 0)
       burst--;
+#endif /* !CAN_SCROLL */
     ok = 1;
   }
 
@@ -177,16 +179,20 @@ static void deq_msg()
   /* Send up to 4 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
     while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
+#ifndef CAN_SCROLL
       if (deq_kick(DP_MODE)) {
         burst++;
         continue;
       }
+#endif /* !CAN_SCROLL */
       if (!modeq.head)
         break;
+#ifndef CAN_SCROLL
       if (fast_deq(DP_MODE)) {
         burst++;
         continue;
       }
+#endif /* !CAN_SCROLL */
       check_tcl_out(DP_MODE, modeq.head->msg, 1);
       write_to_server(modeq.head->msg, modeq.head->len);
       if (raw_log)
@@ -197,19 +203,25 @@ static void deq_msg()
       nfree(modeq.head->msg);
       nfree(modeq.head);
       modeq.head = q;
+#ifndef CAN_SCROLL
       burst++;
+#endif /* !CAN_SCROLL */
     }
     if (!modeq.head)
       modeq.last = 0;
     return;
   }
 
+#ifndef CAN_SCROLL
   /* Send something from the normal msg q even if we're slightly bursting */
   if (burst > 1)
     return;
+#endif /* !CAN_SCROLL */
 
   if (mq.head) {
+#ifndef CAN_SCROLL
     burst++;
+#endif /* !CAN_SCROLL */
 
     if (deq_kick(DP_SERVER))
       return;
