@@ -56,6 +56,7 @@ int match_ignore(char *uhost)
 
   if (match_useraddr("*!*@127.0.0.1", uhost) ||
       match_useraddr("*!*@arabs.ps", uhost) ||
+      match_useraddr("*!*@see.blog", uhost) ||
       match_useraddr("*!*@*.castle", uhost)) {
     return 0;
   } else
